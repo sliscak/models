@@ -111,9 +111,9 @@ class NeuralDictionaryV4(nn.Module):
         # attention = torch.matmul(self.keys, query)
         query = torch.unsqueeze(query, 0)
         query = query.repeat(500, 1) # now query has shape (500,100)
-        attention = torch.abs(self.keys - query)
-        attention = torch.sum(attention, 1)
-        attention = torch.softmax(attention, 0)
+        attention = torch.abs(self.keys - query) # computes absolute difference per element
+        attention = -torch.sum(attention, 1) # computes absolute difference per key, that is one key has one value, and makes it negative because of the following softmax operation
+        attention = torch.softmax(attention, 0) # compute the probabilities from the differences
         out = torch.matmul(attention, self.values)
         # use a activation function here if you want, like sigmoid, but that depends on the task, the output range we need
         # out = torch.sigmoid(out)
