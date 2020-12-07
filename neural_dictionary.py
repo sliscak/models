@@ -64,3 +64,62 @@ class NeuralDictionaryV2(nn.Module):
         # print(self.meta.most_common(10))
 
         return out
+
+class NeuralDictionaryV3(nn.Module):
+    # Going Full Circle.
+    def __init__(self):
+        super(NeuralDictionaryV3, self).__init__()
+        # Keys are replaced with Linear layer because they are equivalent
+        # 500 keys each of size 100, so the query needs to be of size 100
+        self.linear = nn.Linear(100, 500)
+
+        # Values are replaced with Linear layer because they are equivalent
+        # 500 values each of size 4, the output of the model will be of size 4
+        self.linear2 = nn.Linear(500, 4)
+
+        # to track and later see how many times a key has been chosen as the most important one(the key with the highest confidence)
+        self.meta = Counter()
+
+    def forward(self, query):
+        attention = self.linear(query)
+        attention = torch.softmax(attention, 0)
+        print(attention.shape)
+        out = self.linear2(attention)
+        # use a activation function here if you want, like sigmoid, but that depends on the task, the output range we need
+        # out = torch.sigmoid(out)
+
+        amax = torch.argmax(attention)
+        self.meta.update(f'{amax}')
+        # print(self.meta.most_common(10))
+
+        return out
+     
+class NeuralDictionaryV4(nn.Module):
+
+    def __init__(self):
+        super(NeuralDictionaryV4, self).__init__()
+        # 500 keys each of size 100, so the query needs to be of size 100
+        self.keys = nn.Parameter(torch.randn(500, 100, dtype=torch.float))
+
+        # 500 values each of size 4, the output of the model will be of size 4
+        self.values = nn.Parameter(torch.randn(500, 4, dtype=torch.float))
+
+        # to track and later see how many times a key has been chosen as the most important one(the key with the highest confidence)
+        self.meta = Counter()
+
+    def forward(self, query):
+        # attention = torch.matmul(self.keys, query)
+        query = torch.unsqueeze(query, 0)
+        query = query.repeat(500, 1) # now query has shape (500,100)
+        attention = torch.abs(self.keys - query)
+        attention = torch.sum(attention, 1)
+        attention = torch.softmax(attention, 0)
+        out = torch.matmul(attention, self.values)
+        # use a activation function here if you want, like sigmoid, but that depends on the task, the output range we need
+        # out = torch.sigmoid(out)
+
+        amax = torch.argmax(attention)
+        self.meta.update(f'{amax}')
+        # print(self.meta.most_common(10))
+
+        return out
