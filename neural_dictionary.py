@@ -15,7 +15,7 @@ class NeuralDictionary(nn.Module):
      #   The query could be resized (like an image) to lower the computational requirements.
 
     def __init__(self):
-        super(Net, self).__init__()
+        super(NeuralDictionary, self).__init__()
         # 500 keys each of size 100, so the query needs to be of size 100
         self.keys = nn.Parameter(torch.randn(500, 100, dtype=torch.double))
         
