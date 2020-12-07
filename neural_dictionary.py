@@ -12,6 +12,7 @@ class NeuralDictionary(nn.Module):
      #   If the key would represent a Class the count of 0 would suggest that that particular Class has not been learned. 
      #   So byt tracking the count of used(or top confidence) key-value pairs while learning we would learn the uncertainty(or curiosity) values.
      #   Key-value pairs that have not been learned while Trainig the model, that is their attention/confidence value was 0.
+     #   The query could be resized (like an image) to lower the computational requirements.
 
     def __init__(self):
         super(Net, self).__init__()
