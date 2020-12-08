@@ -12,6 +12,7 @@ class NeuralDictionary(nn.Module):
      # We could track which key-value pairs have been learned(with a list of counters or the Counter object) and use that to tell how surprised the network is to see a particular query(or state in Reinforcement Learning).
      #   The per key counter could be increased by 1 for every time the key-value pair was trained or every time the key-value pair was trained and the key confidence/probability/attention was the highest from all keys ( or was in the Top-K list),
      #    or if the key-value pair has succesfully classified an object/state or other tensor.
+     #   So the per key counter could be seen as a king of flag that tells us if the correspondig key-value pair has been learned or is completely random.
      #   That could be very useful in Reinforcement Learning(as curiosity value) or Classification to detect which class has not been learned.
      #   In Reinforcemenet learning the count of 0 would represent the highest/maximum curiosity/uncertainty value. That would represent a state(or location) that has not been visited. An agent guided by curiosity would try to visit and learn that state.
      #   If the key would represent a Class the count of 0 would suggest that that particular Class has not been learned. 
