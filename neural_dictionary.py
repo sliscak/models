@@ -125,3 +125,41 @@ class NeuralDictionaryV4(nn.Module):
         # print(self.meta.most_common(10))
 
         return out
+     
+ class NeuralDictionaryV5(nn.Module):
+    # Compares all keys with the query, computes the absolute differences per element between key and query, sums up the differences per key,
+    #    then uses softmax to compute the probabilities per key and matrix multiplies the probabilities with the values.
+
+    def __init__(self, in_features: int, out_features: int, capacity: int):
+        # capacity,C, represents the number of key-value pairs.
+        self.capacity = capacity
+        super(NeuralDictionaryV5, self).__init__()
+        # C keys each of size {in_features}, so the query needs to be of size {in_features}
+        # for example 500 keys each of size 100, so the query needs to be of size 100
+        self.keys = nn.Parameter(torch.randn(capacity, in_features, dtype=torch.float))
+
+        # C values each of size {out_features}, the output of the model will be of size {out_features}
+        # for example 500 values each of size 4, the output of the model will be of size 4
+        self.values = nn.Parameter(torch.randn(capacity, out_features, dtype=torch.float))
+
+        # to track and later see how many times a key has been chosen as the most important one(the key with the highest confidence)
+        self.meta = Counter()
+
+    def forward(self, query):
+        # attention = torch.matmul(self.keys, query)
+        query = torch.unsqueeze(query, 0)
+        query = query.repeat(self.capacity, 1)  # now query has shape (500,100)
+        attention = torch.abs(
+            self.keys - query)  # computes absolute difference per element , (maybe later try euclidean distance or cosine similarity)
+        attention = -torch.sum(attention,
+                               1)  # computes the sum of absolute differences per key, that is one key has one value, and makes it negative because of the following softmax operation
+        attention = torch.softmax(attention, 0)  # compute the probabilities from the differences
+        out = torch.matmul(attention, self.values)
+        # use a activation function here if you want, like sigmoid, but that depends on the task, the output range we need
+        # out = torch.sigmoid(out)
+
+        amax = torch.argmax(attention)
+        self.meta.update(f'{amax}')
+        # print(self.meta.most_common(10))
+
+        return out
