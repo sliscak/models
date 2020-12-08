@@ -161,3 +161,7 @@ class NeuralDictionaryV5(nn.Module):
         # print(self.meta.most_common(10))
 
         return out
+     
+# IDEA: Save all input quries as nontrainable keys and a associate values with them, every save nontrainable key(the saved query) would have a trainable/learnable value associated.
+#    The algorithm would use similarity search to find the most similar key and output the value * confidence(from similarity search).
+#    The algorithm search over all keys, returns their confidence/probabilities, uses that as attention and multiplies the values with their corresponding confidences.  
