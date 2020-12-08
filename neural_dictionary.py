@@ -168,6 +168,13 @@ class NeuralDictionaryV5(nn.Module):
 
         return out
      
-# IDEA: Save all input quries as nontrainable keys and a associate values with them, every save nontrainable key(the saved query) would have a trainable/learnable value associated.
-#    The algorithm would use similarity search to find the most similar key and output the value * confidence(from similarity search).
+# IDEA: Save all input quries as nontrainable keys and associate values with them (every saved nontrainable key(the saved query) would have a trainable/learnable value associated)
+#    The algorithm would use similarity search to find the most similar key and output the value * confidence(the confidence is from similarity search, the similarity or difference between query and key).
 #    The algorithm search over all keys, returns their confidence/probabilities, uses that as attention and multiplies the values with their corresponding attention and sums up all values into the final tensor.
+#    Example: The algorithm would save an image of a STOP sign as a key and associate a random learnable parameter as value to the key, thus creating a key-value pair. (key --> nontrainable, value --> trainable)
+#              If the algorithm gets a query(in this example an image) as input, it compares/similarity-searches all keys with that query. The similarity or differences would be softmaxed that is their range would be
+#                   would be limited to be between 0 and 1. ..... A 1(one) would mean that the key a query are indentical/the same. A 0(zero) would mean that the query is different from the key.
+#              So the algorithm creates a tensor of Attention(values)  and then matrix multiplies them with the values associated to the keys, thus creating the final tensor.
+#              While trainining the values associated to the keys would be learned. So the algorithm/agent could learn to stop at the STOP sing, change the direction or do something else.
+
+#              
