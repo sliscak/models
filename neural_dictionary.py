@@ -126,7 +126,7 @@ class NeuralDictionaryV4(nn.Module):
 
         return out
      
- class NeuralDictionaryV5(nn.Module):
+class NeuralDictionaryV5(nn.Module):
     # Compares all keys with the query, computes the absolute differences per element between key and query, sums up the differences per key,
     #    then uses softmax to compute the probabilities per key and matrix multiplies the probabilities with the values.
 
@@ -149,10 +149,8 @@ class NeuralDictionaryV4(nn.Module):
         # attention = torch.matmul(self.keys, query)
         query = torch.unsqueeze(query, 0)
         query = query.repeat(self.capacity, 1)  # now query has shape (500,100)
-        attention = torch.abs(
-            self.keys - query)  # computes absolute difference per element , (maybe later try euclidean distance or cosine similarity)
-        attention = -torch.sum(attention,
-                               1)  # computes the sum of absolute differences per key, that is one key has one value, and makes it negative because of the following softmax operation
+        attention = torch.abs(self.keys - query)  # computes absolute difference per element , (maybe later try euclidean distance or cosine similarity)
+        attention = -torch.sum(attention,1)  # computes the sum of absolute differences per key, that is one key has one value, and makes it negative because of the following softmax operation
         attention = torch.softmax(attention, 0)  # compute the probabilities from the differences
         out = torch.matmul(attention, self.values)
         # use a activation function here if you want, like sigmoid, but that depends on the task, the output range we need
