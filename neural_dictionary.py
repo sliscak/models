@@ -148,7 +148,7 @@ class NeuralDictionaryV5(nn.Module):
     def forward(self, query):
         # attention = torch.matmul(self.keys, query)
         query = torch.unsqueeze(query, 0)
-        query = query.repeat(self.capacity, 1)  # now query has shape (capacity, in_features)
+        query = query.repeat(self.capacity, 1)  # now query has shape (capacity, in_features)  , for example (500, 100)
         attention = torch.abs(self.keys - query)  # computes absolute difference per element , (maybe later try euclidean distance or cosine similarity)
         attention = -torch.sum(attention,1)  # computes the sum of absolute differences per key, that is one key has one value, and makes it negative because of the following softmax operation
         attention = torch.softmax(attention, 0)  # compute the probabilities from the differences
