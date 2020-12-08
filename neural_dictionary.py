@@ -2,6 +2,8 @@ import torch
 import torch.nn as nn
 from collections import Counter
 
+# NEURAL DICTIONARY
+
 class NeuralDictionary(nn.Module):
      # Compares a query againts all keys and produces a confidence/probability for each key, the confidence/probability is then multiplied by the value and summed up.
     
