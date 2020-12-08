@@ -6,7 +6,8 @@ from collections import Counter
 
 class NeuralDictionary(nn.Module):
      # Compares a query againts all keys and produces a confidence/probability for each key, the confidence/probability is then multiplied by the value and summed up.
-    
+     # Somehow this is looks similar to Q-learning where we search for the state(position) in a table and update the values associated to the state.    
+
      # The model could be speed up with similarity search, or by learning just the Top highest probability/confidence keys or values(or both).
      # We could track which key-value pairs have been learned(with a list of counters or the Counter object) and use that to tell how surprised the network is to see a particular query(or state in Reinforcement Learning).
      #   The per key counter could be increased by 1 for every time the key-value pair was trained or every time the key-value pair was trained and the key confidence/probability/attention was the highest from all keys ( or was in the Top-K list),
