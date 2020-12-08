@@ -95,7 +95,9 @@ class NeuralDictionaryV3(nn.Module):
         return out
      
 class NeuralDictionaryV4(nn.Module):
-
+     # Compares all keys with the query, computes the absolute differences per element between key and query, sums up the differences per key, 
+     #    then uses softmax to compute the probabilities per key and matrix multiplies the probabilities with the values.
+      
     def __init__(self):
         super(NeuralDictionaryV4, self).__init__()
         # 500 keys each of size 100, so the query needs to be of size 100
