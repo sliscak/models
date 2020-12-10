@@ -20,13 +20,17 @@ class NeuralDictionary(nn.Module):
      #   Key-value pairs that have not been learned while Trainig the model, that is their attention/confidence value was 0.
      #   The query could be resized (like an image) to lower the computational requirements.
 
-    def __init__(self):
+    def __init__(self, in_features: int, out_features: int, capacity: int):
         super(NeuralDictionary, self).__init__()
-        # 500 keys each of size 100, so the query needs to be of size 100
-        self.keys = nn.Parameter(torch.randn(500, 100, dtype=torch.double))
-        
-        # 500 values each of size 4, the output of the model will be of size 4
-        self.values = nn.Parameter(torch.randn(500, 4, dtype=torch.double))
+        # capacity represents the number of key-value pairs (or just the number of keys if there are no values).
+        self.capacity = capacity
+        # {capacity} keys each of size {in_features}, so the query needs to be of size {in_features}
+        # for example: 500 keys each of size 100, so the query needs to be of size 100
+        self.keys = nn.Parameter(torch.randn(capacity, in_features, dtype=torch.float))
+
+        # C values each of size {out_features}, the output of the model will be of size {out_features}
+        # for example 500 values each of size 4, the output of the model will be of size 4
+        self.values = nn.Parameter(torch.randn(capacity, out_features, dtype=torch.float))
 
         # to track and later see how many times a key has been chosen as the most important one(the key with the highest confidence)
         self.meta = Counter()
@@ -137,9 +141,9 @@ class NeuralDictionaryV5(nn.Module):
     #    then uses softmax to compute the probabilities per key and matrix multiplies the probabilities with the values.
 
     def __init__(self, in_features: int, out_features: int, capacity: int):
+        super(NeuralDictionaryV5, self).__init__()
         # capacity,C, represents the number of key-value pairs.
         self.capacity = capacity
-        super(NeuralDictionaryV5, self).__init__()
         # C keys each of size {in_features}, so the query needs to be of size {in_features}
         # for example 500 keys each of size 100, so the query needs to be of size 100
         self.keys = nn.Parameter(torch.randn(capacity, in_features, dtype=torch.float))
