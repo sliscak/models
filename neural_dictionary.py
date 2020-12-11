@@ -76,7 +76,7 @@ class NeuralDictionaryV2(nn.Module):
         return out
 
 class NeuralDictionaryV3(nn.Module):
-    # Going Full Circle.
+    # Going Full Circle. HERE I REALISED THAT THE NEURAL DICTIONARY IS JUST A TWO LAYER NEURAL NETWORK(OR MLP) WITH A SOFMTAX ACTIVATION FUNCTION BETWEEN THEM.
     def __init__(self):
         super(NeuralDictionaryV3, self).__init__()
         # Keys are replaced with Linear layer because they are equivalent
