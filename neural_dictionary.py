@@ -172,6 +172,45 @@ class NeuralDictionaryV5(nn.Module):
 
         return out
      
+class NeuralDictionaryV6(nn.Module):
+
+    def __init__(self, capacity: int):
+        super(NeuralDictionaryV6, self).__init__()
+        # capacity represents the maximum number of key-value pairs.
+        self.capacity = capacity
+        self.keys = None
+        self.values = None
+
+        # to track and later see how many times a key has been chosen as the most important one(the key with the highest confidence)
+        self.meta = Counter()
+
+    def forward(self, query):
+        attention = torch.matmul(self.keys, query)
+        attention = torch.softmax(attention, 0)
+        attention = (attention >= torch.max(attention)) * attention
+        out = torch.matmul(attention, self.values)
+        # use a activation function here if you want, like sigmoid, but that depends on the task, the output range we need
+        # out = torch.sigmoid(out)
+
+        amax = torch.argmax(attention)
+        self.meta.update(f'{amax}')
+        # print(self.meta.most_common(10))
+
+        return out
+
+    def update(self, key, value):
+        # add key as trainable parameter to the dictionary and value as nontrainable paramater/tensor to the dictionary 
+        key = torch.unsqueeze(key, 0)
+        value = torch.unsqueeze(value, 0)
+        if self.values is None:
+            self.keys = nn.Parameter(key)
+            self.values = value * 1
+        else:
+            self.keys = nn.Parameter(torch.cat((self.keys, key)))
+            # print(self.keys.shape)
+            self.values = torch.cat((self.values, value), 0)
+ 
+
 # IDEA: Save all input quries as nontrainable keys and associate values with them (every saved nontrainable key(the saved query) would have a trainable/learnable value associated)
 #    The algorithm would use similarity search to find the most similar key and output the value * confidence(the confidence is from similarity search, the similarity or difference between query and key).
 #    The algorithm search over all keys, returns their confidence/probabilities, uses that as attention and multiplies the values with their corresponding attention and sums up all values into the final tensor.
