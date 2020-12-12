@@ -174,10 +174,8 @@ class NeuralDictionaryV5(nn.Module):
      
 class NeuralDictionaryV6(nn.Module):
 
-    def __init__(self, capacity: int):
+    def __init__(self):
         super(NeuralDictionaryV6, self).__init__()
-        # capacity represents the maximum number of key-value pairs.
-        self.capacity = capacity
         self.keys = None
         self.values = None
 
