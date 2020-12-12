@@ -185,7 +185,7 @@ class NeuralDictionaryV6(nn.Module):
     def forward(self, query):
         attention = torch.matmul(self.keys, query)
         attention = torch.softmax(attention, 0)
-        attention = (attention >= torch.max(attention)) * attention
+        #attention = (attention >= torch.max(attention)) * attention
         out = torch.matmul(attention, self.values)
         # use a activation function here if you want, like sigmoid, but that depends on the task, the output range we need
         # out = torch.sigmoid(out)
