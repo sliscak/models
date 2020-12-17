@@ -1,6 +1,8 @@
 import torch
 import torch.nn as nn
 from collections import Counter
+import numpy as np
+import faiss
 
 # NEURAL DICTIONARY
 
@@ -207,7 +209,7 @@ class NeuralDictionaryV6(nn.Module):
             self.keys = nn.Parameter(torch.cat((self.keys, key)))
             # print(self.keys.shape)
             self.values = torch.cat((self.values, value), 0)
- 
+               
 
 # IDEA: Save all input quries as nontrainable keys and associate values with them (every saved nontrainable key(the saved query) would have a trainable/learnable value associated)
 #    The algorithm would use similarity search to find the most similar key and output the value * confidence(the confidence is from similarity search, the similarity or difference between query and key).
@@ -218,4 +220,34 @@ class NeuralDictionaryV6(nn.Module):
 #              So the algorithm creates a tensor of Attention(values)  and then matrix multiplies them with the values associated to the keys, thus creating the final tensor.
 #              While trainining the values associated to the keys would be learned. So the algorithm/agent could learn to stop at the STOP sing, change the direction or do something else.
 
-#              
+class NeuralDictionaryV7(nn.Module):
+
+    def __init__(self, in_features: int, capacity: int):
+        super(NeuralDictionaryV7, self).__init__()
+        # capacity represents the maximum number of key-value pairs.
+        self.capacity = capacity
+        # self.keys = None
+        self.values = None
+        self.index = faiss.IndexFlatL2(in_features)
+
+        # to track and later see how many times a key has been chosen as the most important one(the key with the highest confidence)
+        # self.meta = Counter()
+
+    def forward(self, query):
+        q = torch.unsqueeze(query, 0).detach().numpy().astype('float32')
+        distances, ids = self.index.search(q, 1)
+        print(f'IDS: {ids}')
+        id = ids[0]
+        out = torch.matmul(self.values[id], query)
+
+        return out
+
+    def update(self, key, value):
+        key = torch.unsqueeze(key, 0)
+        self.index.add(key.detach().numpy().astype('float32'))
+        value = torch.unsqueeze(value, 0)
+        print(value)
+        if self.values is None:
+            self.values = nn.Parameter(value)
+        else:
+            self.values = nn.Parameter(torch.cat((self.values, value)))
