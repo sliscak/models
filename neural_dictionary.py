@@ -256,7 +256,7 @@ class NeuralDictionaryV8(nn.Module):
     # Dictionary where the key is static(nontrainable) and the value is a learnable(trainable) parameter.
     # All keys are saved inside the index.
     # Use the update method to add key-value pairs.
-    # Keys and values can be of a different size(shape) but all next keys and values must be of the same size(shape) as the first key and value respectively.
+    # Keys and values can be of a different size(shape) but all subsequent keys and values must be of the same size(shape) as the first key and value respectively.
     # Returns the value from the key-value pair, for which the key is most similar to the query.
     # (the algorithm finds the most similar key to a query and then returns the value of the key-value pair which had the most similar key.)
 
