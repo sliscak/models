@@ -224,6 +224,7 @@ class NeuralDictionaryV7(nn.Module):
     # Dictionary where the key is static(nontrainable) and the value is a learnable(trainable) parameter.
     # All keuys are saved inside the index.
     # Use the update method to add key-value pairs.
+    # The next evolution would be to turn the keys into learnable(trainable) parameters.
     def __init__(self, in_features: int):
         super(NeuralDictionaryV7, self).__init__()
         self.values = None
