@@ -221,10 +221,10 @@ class NeuralDictionaryV6(nn.Module):
 #              While trainining the values associated to the keys would be learned. So the algorithm/agent could learn to stop at the STOP sing, change the direction or do something else.
 
 class NeuralDictionaryV7(nn.Module):
-
+    # Dictionary where the key is static(nontrainable) and the value is a learnable(trainable) parameter.
+    # All keuys are saved inside the index.
     def __init__(self, in_features: int):
         super(NeuralDictionaryV7, self).__init__()
-        # self.keys = None
         self.values = None
         self.index = faiss.IndexFlatL2(in_features)
 
@@ -237,7 +237,6 @@ class NeuralDictionaryV7(nn.Module):
         print(f'IDS: {ids}')
         id = ids[0]
         out = torch.matmul(self.values[id], query)
-
         return out
 
     def update(self, key, value):
