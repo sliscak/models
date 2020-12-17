@@ -222,7 +222,7 @@ class NeuralDictionaryV6(nn.Module):
 
 class NeuralDictionaryV7(nn.Module):
     # Dictionary where the key is static(nontrainable) and the value is a learnable(trainable) parameter.
-    # All keuys are saved inside the index.
+    # All keys are saved inside the index.
     # Use the update method to add key-value pairs.
     # The next evolution would be to turn the keys into learnable(trainable) parameters.
     def __init__(self, in_features: int):
@@ -243,6 +243,38 @@ class NeuralDictionaryV7(nn.Module):
 
     def update(self, key, value):
         # all keys and values should be of the same shape
+        key = torch.unsqueeze(key, 0)
+        self.index.add(key.detach().numpy().astype('float32'))
+        value = torch.unsqueeze(value, 0)
+        print(value)
+        if self.values is None:
+            self.values = nn.Parameter(value)
+        else:
+            self.values = nn.Parameter(torch.cat((self.values, value)))
+               
+class NeuralDictionaryV8(nn.Module):
+    # Dictionary where the key is static(nontrainable) and the value is a learnable(trainable) parameter.
+    # All keys are saved inside the index.
+    # Use the update method to add key-value pairs.
+    # Keys and values can be of a different size(shape) but all next keys and values must be of the same size(shape) as the first key and value respectively.
+    # Returns the value from the key-value pair, for which the key is most similar to the query.
+    # (the algorithm finds the most similar key to a query and then returns the value of the key-value pair which had the most similar key.)
+
+    def __init__(self, in_features: int):
+        super(NeuralDictionaryV8, self).__init__()
+        self.values = None
+        self.index = faiss.IndexFlatL2(in_features)
+        # to track and later see how many times a key has been chosen as the most important one(the key with the highest confidence)
+        # self.meta = Counter()
+
+    def forward(self, query):
+        q = torch.unsqueeze(query, 0).detach().numpy().astype('float32')
+        distances, ids = self.index.search(q, 1)
+        print(f'IDS: {ids}')
+        id = ids[0]
+        return self.values[id]
+
+    def update(self, key, value):
         key = torch.unsqueeze(key, 0)
         self.index.add(key.detach().numpy().astype('float32'))
         value = torch.unsqueeze(value, 0)
