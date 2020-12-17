@@ -222,10 +222,8 @@ class NeuralDictionaryV6(nn.Module):
 
 class NeuralDictionaryV7(nn.Module):
 
-    def __init__(self, in_features: int, capacity: int):
+    def __init__(self, in_features: int):
         super(NeuralDictionaryV7, self).__init__()
-        # capacity represents the maximum number of key-value pairs.
-        self.capacity = capacity
         # self.keys = None
         self.values = None
         self.index = faiss.IndexFlatL2(in_features)
@@ -243,6 +241,7 @@ class NeuralDictionaryV7(nn.Module):
         return out
 
     def update(self, key, value):
+        # all keys and values should be of the same shape
         key = torch.unsqueeze(key, 0)
         self.index.add(key.detach().numpy().astype('float32'))
         value = torch.unsqueeze(value, 0)
