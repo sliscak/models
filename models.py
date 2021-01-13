@@ -286,7 +286,10 @@ class NeuralDictionaryV8(nn.Module):
 
 
 class NeuralMemory(nn.Module):
-
+    """"
+        in_features -> number of input features
+        out_features -> number of output features
+    """
     def __init__(self, in_features: int, out_features: int):
         super(NeuralMemory, self).__init__()
         self.memory = nn.Parameter(torch.rand(out_features, in_features), requires_grad=True)
@@ -298,7 +301,11 @@ class NeuralMemory(nn.Module):
 
 
 class Net(nn.Module):
-
+    """"
+        num_layers -> number/count of layers in the model
+        input_size -> number of input features for the model
+        output_size -> number of output features for the model
+    """
     def __init__(self, num_layers: int, input_size: int, output_size: int):
         super(Net, self).__init__()
         layers = []
