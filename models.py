@@ -307,5 +307,3 @@ class Net(nn.Module):
         for layer in self.layers:
             query = layer(query)
         return query
-
-net = Net(10, 2, 2)
