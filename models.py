@@ -309,7 +309,7 @@ class Net(nn.Module):
     def __init__(self, num_layers: int, input_size: int, output_size: int):
         super(Net, self).__init__()
         layers = []
-        z = 10
+        z = 10 # output size of the layers in between.
         num_layers = abs(num_layers)
         if num_layers == 1:
             layers.append(NeuralMemory(in_features=input_size, out_features=output_size))
