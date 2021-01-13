@@ -4,6 +4,56 @@ from collections import Counter
 import numpy as np
 import faiss
 
+class NeuralMemory(nn.Module):
+    """"
+        in_features -> number of input features
+        out_features -> number of output features
+    """
+    def __init__(self, in_features: int, out_features: int):
+        super(NeuralMemory, self).__init__()
+        self.memory = nn.Parameter(torch.rand(out_features, in_features), requires_grad=True)
+
+    def forward(self, query):
+        query = query.unsqueeze(0)
+        out = torch.cosine_similarity(query, self.memory, 1)
+        return out
+
+
+class Net(nn.Module):
+    """"
+        num_layers -> number/count of layers in the model
+        input_size -> number of input features for the model
+        output_size -> number of output features for the model
+    """
+    def __init__(self, num_layers: int, input_size: int, output_size: int):
+        super(Net, self).__init__()
+        layers = []
+        z = 10 # output size of the layers in between.
+        num_layers = abs(num_layers)
+        if num_layers == 1:
+            layers.append(NeuralMemory(in_features=input_size, out_features=output_size))
+        elif num_layers == 2:
+            layers.append(NeuralMemory(in_features=input_size, out_features=z))
+            layers.append(NeuralMemory(in_features=z, out_features=output_size))
+        else:
+            for i in range(num_layers):
+                if i == 0:
+                    layers.append(NeuralMemory(in_features=input_size, out_features=10))
+                elif i == (num_layers - 1):
+                    layers.append(NeuralMemory(in_features=10, out_features=output_size))
+                else:
+                    layers.append(NeuralMemory(in_features=10, out_features=10))
+        self.layers = nn.ModuleList(layers)
+        # self.layers = nn.ModuleList([NeuralMemory(in_features=input_size, out_features=output_size) for i in range(num_layers)])
+    def forward(self, query):
+        # for layer in self.layers:
+        #     query = layer(query)
+        for i in range(len(self.layers)):
+            query = self.layers[i](query)
+
+        return query
+
+
 # NEURAL DICTIONARY
 
 class NeuralDictionary(nn.Module):
@@ -285,51 +335,3 @@ class NeuralDictionaryV8(nn.Module):
             self.values = nn.Parameter(torch.cat((self.values, value)))
 
 
-class NeuralMemory(nn.Module):
-    """"
-        in_features -> number of input features
-        out_features -> number of output features
-    """
-    def __init__(self, in_features: int, out_features: int):
-        super(NeuralMemory, self).__init__()
-        self.memory = nn.Parameter(torch.rand(out_features, in_features), requires_grad=True)
-
-    def forward(self, query):
-        query = query.unsqueeze(0)
-        out = torch.cosine_similarity(query, self.memory, 1)
-        return out
-
-
-class Net(nn.Module):
-    """"
-        num_layers -> number/count of layers in the model
-        input_size -> number of input features for the model
-        output_size -> number of output features for the model
-    """
-    def __init__(self, num_layers: int, input_size: int, output_size: int):
-        super(Net, self).__init__()
-        layers = []
-        z = 10 # output size of the layers in between.
-        num_layers = abs(num_layers)
-        if num_layers == 1:
-            layers.append(NeuralMemory(in_features=input_size, out_features=output_size))
-        elif num_layers == 2:
-            layers.append(NeuralMemory(in_features=input_size, out_features=z))
-            layers.append(NeuralMemory(in_features=z, out_features=output_size))
-        else:
-            for i in range(num_layers):
-                if i == 0:
-                    layers.append(NeuralMemory(in_features=input_size, out_features=10))
-                elif i == (num_layers - 1):
-                    layers.append(NeuralMemory(in_features=10, out_features=output_size))
-                else:
-                    layers.append(NeuralMemory(in_features=10, out_features=10))
-        self.layers = nn.ModuleList(layers)
-        # self.layers = nn.ModuleList([NeuralMemory(in_features=input_size, out_features=output_size) for i in range(num_layers)])
-    def forward(self, query):
-        # for layer in self.layers:
-        #     query = layer(query)
-        for i in range(len(self.layers)):
-            query = self.layers[i](query)
-
-        return query
