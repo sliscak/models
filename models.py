@@ -29,11 +29,11 @@ class Net(nn.Module):
         num_layers -> number/count of layers in the model
         input_size -> number of input features for the model
         output_size -> number of output features for the model
+        z -> output size of the layers in between.
     """
-    def __init__(self, num_layers: int, input_size: int, output_size: int):
+    def __init__(self, num_layers: int, input_size: int, output_size: int, z: int = 100):
         super(Net, self).__init__()
         layers = []
-        z = 10 # output size of the layers in between.
         num_layers = abs(num_layers)
         if num_layers == 1:
             layers.append(NeuralMemory(in_features=input_size, out_features=output_size))
