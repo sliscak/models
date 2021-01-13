@@ -283,3 +283,14 @@ class NeuralDictionaryV8(nn.Module):
             self.values = nn.Parameter(value)
         else:
             self.values = nn.Parameter(torch.cat((self.values, value)))
+
+class NeuralMemory():
+    class NeuralMemory(nn.Module):
+
+        def __init__(self, in_features: int, out_features):
+            super(NeuralMemory, self).__init__()
+            self.memory = nn.Parameter(torch.rand(in_features, out_features))
+
+        def forward(self, query):
+            out = torch.cosine_similarity(query, self.memory, 0)
+            return out
