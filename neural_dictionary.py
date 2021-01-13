@@ -289,11 +289,18 @@ class NeuralMemory(nn.Module):
 
     def __init__(self, in_features: int, out_features: int):
         super(NeuralMemory, self).__init__()
-        self.memory = nn.Parameter(torch.rand(in_features, out_features), requires_grad=True)
+        self.memory = nn.Parameter(torch.rand(out_features, in_features), requires_grad=True)
 
     def forward(self, query):
-        out = torch.cosine_similarity(query, self.memory, 0)
+        query = query.unsqueeze(0)
+        out = torch.cosine_similarity(query, self.memory, 1)
         return out
 
 
 nm = NeuralMemory(3, 10)
+a = torch.tensor([2,3,1])
+print(a.shape)
+o = nm(a)
+print(o)
+print(o.shape)
+
