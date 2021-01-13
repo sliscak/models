@@ -305,7 +305,7 @@ class Net(nn.Module):
         for i in range(num_layers):
             if i == 0:
                 layers.append(NeuralMemory(in_features=input_size, out_features=10))
-            elif i == (len(num_layers) - 1):
+            elif i == (num_layers - 1):
                 layers.append(NeuralMemory(in_features=10, out_features=output_size))
             else:
                 layers.append(NeuralMemory(in_features=10, out_features=10))
