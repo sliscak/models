@@ -11,7 +11,7 @@ def sparse_dot(m1, m2):
 #     argmax = m1.values.argmax()
 
 def sparse_cosine_similarity(a, b):
-    y = sparse_dot(a,b)/ (linalg.norm(a) * linalg.norm(b))
+    y = sparse_dot(a,b) / (linalg.norm(a) * linalg.norm(b))
     return y
 
 import torch
