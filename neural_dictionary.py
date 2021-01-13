@@ -288,7 +288,7 @@ class NeuralDictionaryV8(nn.Module):
 class NeuralMemory():
     class NeuralMemory(nn.Module):
 
-        def __init__(self, in_features: int, out_features):
+        def __init__(self, in_features: int, out_features: int):
             super(NeuralMemory, self).__init__()
             self.memory = nn.Parameter(torch.rand(in_features, out_features))
 
