@@ -8,6 +8,11 @@ class NeuralMemory(nn.Module):
     """"
         in_features -> number of input features
         out_features -> number of output features
+
+        compares input query with the memory parameter and returns the similarity values
+        the variable 'out_features' is the number of stored patters.
+        the variable 'in_features' is the size/shape of one pattern.
+
     """
     def __init__(self, in_features: int, out_features: int):
         super(NeuralMemory, self).__init__()
