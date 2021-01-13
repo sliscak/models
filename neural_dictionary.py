@@ -297,10 +297,13 @@ class NeuralMemory(nn.Module):
         return out
 
 
-nm = NeuralMemory(3, 10)
-a = torch.tensor([2,3,1])
-print(a.shape)
-o = nm(a)
-print(o)
-print(o.shape)
+class Net(nn.Module):
 
+    def __init__(self, num_layers: int, input_size: int, output_size: int):
+        super(Net, self).__init__()
+        self.layers = nn.ModuleList([NeuralMemory(in_features=input_size, out_features=output_size) for i in range(num_layers)])
+
+    def forward(self, query):
+        for layer in self.layers:
+            query = layer(query)
+        return query
