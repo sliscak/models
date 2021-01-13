@@ -284,6 +284,7 @@ class NeuralDictionaryV8(nn.Module):
         else:
             self.values = nn.Parameter(torch.cat((self.values, value)))
 
+
 class NeuralMemory():
     class NeuralMemory(nn.Module):
 
