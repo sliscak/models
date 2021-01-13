@@ -302,13 +302,21 @@ class Net(nn.Module):
     def __init__(self, num_layers: int, input_size: int, output_size: int):
         super(Net, self).__init__()
         layers = []
-        for i in range(num_layers):
-            if i == 0:
-                layers.append(NeuralMemory(in_features=input_size, out_features=10))
-            elif i == (num_layers - 1):
-                layers.append(NeuralMemory(in_features=10, out_features=output_size))
-            else:
-                layers.append(NeuralMemory(in_features=10, out_features=10))
+        z = 10
+        num_layers = abs(num_layers)
+        if num_layers == 1:
+            layers.append(NeuralMemory(in_features=input_size, out_features=output_size))
+        elif num_layers == 2:
+            layers.append(NeuralMemory(in_features=input_size, out_features=z))
+            layers.append(NeuralMemory(in_features=z, out_features=output_size))
+        else:
+            for i in range(num_layers):
+                if i == 0:
+                    layers.append(NeuralMemory(in_features=input_size, out_features=10))
+                elif i == (num_layers - 1):
+                    layers.append(NeuralMemory(in_features=10, out_features=output_size))
+                else:
+                    layers.append(NeuralMemory(in_features=10, out_features=10))
         self.layers = nn.ModuleList(layers)
         # self.layers = nn.ModuleList([NeuralMemory(in_features=input_size, out_features=output_size) for i in range(num_layers)])
     def forward(self, query):
