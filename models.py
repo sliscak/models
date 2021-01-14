@@ -241,7 +241,6 @@ class Net8(nn.Module):
         output_size -> number of output features for the model
         z -> number of patterns stored in self.param
 
-        TODO: use sigmoid activation function on 'self.param[idx]' weight.
     """
     def __init__(self, num_layers: int, input_size: int, output_size: int, z: int = 100):
         super(Net8, self).__init__()
@@ -258,7 +257,7 @@ class Net8(nn.Module):
         for i in range(len(self.layers)):
             query = self.layers[i](query)
         idx = query.argmax()
-        output = self.param[idx] * query.max()
+        output = torch.sigmoid(self.param[idx]) * query.max()
         # print(output.shape)
         return output
 
