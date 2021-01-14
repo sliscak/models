@@ -10,7 +10,7 @@ import styles
 
 net = Net7(1, 2, 3, z=10)
 # net = NeuralMemory(2, 3)
-optimizer = SGD(lr=0.03, params=net.parameters())
+optimizer = AdamW(lr=0.03, params=net.parameters())
 criterion = torch.nn.MSELoss()
 
 # x_train = [torch.rand(2) for i in range(10)]

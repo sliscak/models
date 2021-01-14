@@ -101,7 +101,7 @@ class Net3(nn.Module):
         num_layers -> number/count of layers in the model
         input_size -> number of input features for the model
         output_size -> number of output features for the model
-        z -> output size of the layers in between.
+        z -> number of patterns stored in self.param
     """
     def __init__(self, num_layers: int, input_size: int, output_size: int, z: int = 100):
         super(Net3, self).__init__()
@@ -135,7 +135,7 @@ class Net4(nn.Module):
         num_layers -> number/count of layers in the model
         input_size -> number of input features for the model
         output_size -> number of output features for the model
-        z -> output size of the layers in between.
+        z -> number of patterns stored in self.param
     """
     def __init__(self, num_layers: int, input_size: int, output_size: int, z: int = 100):
         super(Net4, self).__init__()
@@ -158,7 +158,7 @@ class Net5(nn.Module):
         num_layers -> number/count of layers in the model
         input_size -> number of input features for the model
         output_size -> number of output features for the model
-        z -> output size of the layers in between.
+        z -> number of patterns stored in self.param
     """
     def __init__(self, num_layers: int, input_size: int, output_size: int, z: int = 100):
         super(Net5, self).__init__()
@@ -185,7 +185,7 @@ class Net6(nn.Module):
         num_layers -> number/count of layers in the model
         input_size -> number of input features for the model
         output_size -> number of output features for the model
-        z -> output size of the layers in between.
+        z -> number of patterns stored in self.param
     """
     def __init__(self, num_layers: int, input_size: int, output_size: int, z: int = 100):
         super(Net6, self).__init__()
@@ -211,12 +211,40 @@ class Net7(nn.Module):
         num_layers -> number/count of layers in the model
         input_size -> number of input features for the model
         output_size -> number of output features for the model
-        z -> output size of the layers in between.
+        z -> number of patterns stored in self.param
 
         TODO: use sigmoid activation function on 'self.param[idx]' weight.
     """
     def __init__(self, num_layers: int, input_size: int, output_size: int, z: int = 100):
         super(Net7, self).__init__()
+        layers = []
+        num_layers = abs(num_layers)
+        if num_layers == 1:
+            layers.append(NeuralMemory(in_features=input_size, out_features=z))
+            self.param = nn.Parameter(torch.rand(z, output_size))
+
+        self.layers = nn.ModuleList(layers)
+
+    def forward(self, query):
+        # print(query.shape)
+        for i in range(len(self.layers)):
+            query = self.layers[i](query)
+        idx = query.argmax()
+        output = self.param[idx] * query.max()
+        # print(output.shape)
+        return output
+
+class Net8(nn.Module):
+    """"
+        num_layers -> number/count of layers in the model
+        input_size -> number of input features for the model
+        output_size -> number of output features for the model
+        z -> number of patterns stored in self.param
+
+        TODO: use sigmoid activation function on 'self.param[idx]' weight.
+    """
+    def __init__(self, num_layers: int, input_size: int, output_size: int, z: int = 100):
+        super(Net8, self).__init__()
         layers = []
         num_layers = abs(num_layers)
         if num_layers == 1:
