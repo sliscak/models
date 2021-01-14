@@ -18,8 +18,15 @@ criterion = torch.nn.MSELoss()
 x_train = [torch.rand(2) for i in range(10)]
 y_train = [torch.rand(3) for i in range(10)]
 
-weights_ph = st.empty()
+col1, col2 = st.beta_columns(2)
+weights1_ph = col1.empty()
+weights2_ph = col2.empty()
+# weights1_ph = st.empty()
+# weights2_ph = st.empty()
+loss_ph = st.empty()
 
+old_weights1 = None
+old_weights2 = None
 for i in range(10000):
     optimizer.zero_grad()
     loss = torch.tensor([0],dtype=float)
@@ -29,10 +36,28 @@ for i in range(10000):
         # print(f'INPUT:\t{x}\nOUTPUT:\t{out}\nGTRUTH:\t{y}')
         # print('---')
 
-    print(list(net.parameters()))
+    # print(list(net.parameters()))
     loss.backward()
     optimizer.step()
-    print(loss.detach())
-    st.write([list(NM.parameters()) for NM in net.layers])
-    sleep(0.03)
+    # print(loss.detach())
+    loss_ph.write(f'loss: {loss.detach().numpy()}')
+
+    weights1 = net.layers[0].memory.detach().numpy()
+    weights2 = net.param.detach().numpy()
+
+    if old_weights1 is None or old_weights2 is None:
+        old_weights1 = weights1
+        old_weights2 = weights2
+
+
+
+    weights1_ph.table(weights1)
+    weights2_ph.table(weights2)
+    # weights_ph.dataframe(weights)
+
+    # weights_ph.write([torch.tensor(param) for param in net.param])
+    # print([param for param in net.param])
+
+    # st.write(list(net.parameters()))
+    sleep(1)
 

@@ -58,6 +58,181 @@ class Net(nn.Module):
 
         return query
 
+class Net2(nn.Module):
+    """"
+        num_layers -> number/count of layers in the model
+        input_size -> number of input features for the model
+        output_size -> number of output features for the model
+        z -> output size of the layers in between.
+    """
+    def __init__(self, num_layers: int, input_size: int, output_size: int, z: int = 100):
+        super(Net2, self).__init__()
+        layers = []
+        num_layers = abs(num_layers)
+        # self.param = nn.Parameter(torch.rand(100, ))
+        self.param = nn.ParameterList([nn.Parameter(torch.rand(output_size)) for i in range(100)])
+        if num_layers == 1:
+            layers.append(NeuralMemory(in_features=input_size, out_features=output_size))
+        elif num_layers == 2:
+            layers.append(NeuralMemory(in_features=input_size, out_features=z))
+            layers.append(NeuralMemory(in_features=z, out_features=output_size))
+        else:
+            for i in range(num_layers):
+                if i == 0:
+                    layers.append(NeuralMemory(in_features=input_size, out_features=10))
+                elif i == (num_layers - 1):
+                    layers.append(NeuralMemory(in_features=10, out_features=output_size))
+                else:
+                    layers.append(NeuralMemory(in_features=10, out_features=10))
+        self.layers = nn.ModuleList(layers)
+        # self.layers = nn.ModuleList([NeuralMemory(in_features=input_size, out_features=output_size) for i in range(num_layers)])
+    def forward(self, query):
+        # for layer in self.layers:
+        #     query = layer(query)
+        for i in range(len(self.layers)):
+            query = self.layers[i](query)
+        output = self.param[query.argmax()]
+        # output = self.param[query.argmax()] * query.max()
+        return output
+
+
+class Net3(nn.Module):
+    """"
+        num_layers -> number/count of layers in the model
+        input_size -> number of input features for the model
+        output_size -> number of output features for the model
+        z -> output size of the layers in between.
+    """
+    def __init__(self, num_layers: int, input_size: int, output_size: int, z: int = 100):
+        super(Net3, self).__init__()
+        layers = []
+        num_layers = abs(num_layers)
+        # self.param = nn.Parameter(torch.rand(100, ))
+        self.param = nn.ParameterList([nn.Parameter(torch.rand(output_size)) for i in range(z)])
+        if num_layers == 1:
+            layers.append(NeuralMemory(in_features=input_size, out_features=z))
+            self.param = nn.ParameterList([nn.Parameter(torch.rand(output_size)) for i in range(z)])
+        # elif num_layers == 2:
+        #     layers.append(NeuralMemory(in_features=input_size, out_features=z))
+        #     layers.append(NeuralMemory(in_features=z, out_features=output_size))
+        # else:
+        #     for i in range(num_layers):
+        #         if i == 0:
+        #             layers.append(NeuralMemory(in_features=input_size, out_features=10))
+        #         elif i == (num_layers - 1):
+        #             layers.append(NeuralMemory(in_features=10, out_features=output_size))
+        #         else:
+        #             layers.append(NeuralMemory(in_features=10, out_features=10))
+        self.layers = nn.ModuleList(layers)
+    def forward(self, query):
+        for i in range(len(self.layers)):
+            query = self.layers[i](query)
+        output = self.param[query.argmax()]
+        return output
+
+class Net4(nn.Module):
+    """"
+        num_layers -> number/count of layers in the model
+        input_size -> number of input features for the model
+        output_size -> number of output features for the model
+        z -> output size of the layers in between.
+    """
+    def __init__(self, num_layers: int, input_size: int, output_size: int, z: int = 100):
+        super(Net4, self).__init__()
+        layers = []
+        num_layers = abs(num_layers)
+        if num_layers == 1:
+            layers.append(NeuralMemory(in_features=input_size, out_features=z))
+            self.param = nn.ParameterList([nn.Parameter(torch.rand(output_size)) for i in range(z)])
+
+        self.layers = nn.ModuleList(layers)
+
+    def forward(self, query):
+        for i in range(len(self.layers)):
+            query = self.layers[i](query)
+        output = self.param[query.argmax()] * query.max()
+        return output
+
+class Net5(nn.Module):
+    """"
+        num_layers -> number/count of layers in the model
+        input_size -> number of input features for the model
+        output_size -> number of output features for the model
+        z -> output size of the layers in between.
+    """
+    def __init__(self, num_layers: int, input_size: int, output_size: int, z: int = 100):
+        super(Net5, self).__init__()
+        layers = []
+        num_layers = abs(num_layers)
+        if num_layers == 1:
+            layers.append(NeuralMemory(in_features=input_size, out_features=z))
+            self.param = nn.Parameter(torch.rand(output_size, z))
+
+        self.layers = nn.ModuleList(layers)
+
+    def forward(self, query):
+        # print(query.shape)
+        for i in range(len(self.layers)):
+            query = self.layers[i](query)
+        # print(query.shape)
+        output = self.param * query
+        output = output.sum(1)
+        # print(output.shape)
+        return output
+
+class Net6(nn.Module):
+    """"
+        num_layers -> number/count of layers in the model
+        input_size -> number of input features for the model
+        output_size -> number of output features for the model
+        z -> output size of the layers in between.
+    """
+    def __init__(self, num_layers: int, input_size: int, output_size: int, z: int = 100):
+        super(Net6, self).__init__()
+        layers = []
+        num_layers = abs(num_layers)
+        if num_layers == 1:
+            layers.append(NeuralMemory(in_features=input_size, out_features=z))
+            self.param = nn.Parameter(torch.rand(z, output_size))
+
+        self.layers = nn.ModuleList(layers)
+
+    def forward(self, query):
+        # print(query.shape)
+        for i in range(len(self.layers)):
+            query = self.layers[i](query)
+        idx = query.argmax()
+        output = self.param[idx]
+        # print(output.shape)
+        return output
+
+class Net7(nn.Module):
+    """"
+        num_layers -> number/count of layers in the model
+        input_size -> number of input features for the model
+        output_size -> number of output features for the model
+        z -> output size of the layers in between.
+
+        TODO: use sigmoid activation function on 'self.param[idx]' weight.
+    """
+    def __init__(self, num_layers: int, input_size: int, output_size: int, z: int = 100):
+        super(Net7, self).__init__()
+        layers = []
+        num_layers = abs(num_layers)
+        if num_layers == 1:
+            layers.append(NeuralMemory(in_features=input_size, out_features=z))
+            self.param = nn.Parameter(torch.rand(z, output_size))
+
+        self.layers = nn.ModuleList(layers)
+
+    def forward(self, query):
+        # print(query.shape)
+        for i in range(len(self.layers)):
+            query = self.layers[i](query)
+        idx = query.argmax()
+        output = self.param[idx] * query.max()
+        # print(output.shape)
+        return output
 
 # NEURAL DICTIONARY
 
