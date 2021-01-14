@@ -8,9 +8,9 @@ import styles
 
 # net = Net(4, 2, 3, z=5) # has 4 layers, the model input is of size 2, output is of size 3, layers in between have output size z=5
 
-net = Net7(1, 2, 3, z=10)
+net = Net7(1, 2, 3, z=20)
 # net = NeuralMemory(2, 3)
-optimizer = AdamW(lr=0.03, params=net.parameters())
+optimizer = SGD(lr=0.3, params=net.parameters())
 criterion = torch.nn.MSELoss()
 
 # x_train = [torch.rand(2) for i in range(10)]

@@ -257,6 +257,7 @@ class Net8(nn.Module):
         for i in range(len(self.layers)):
             query = self.layers[i](query)
         idx = query.argmax()
+        # could use torch.clamp(self.param[idx], min=0, max=1) instead of sigmoid function or use softmax? or softmax on query??
         output = torch.sigmoid(self.param[idx]) * query.max()
         # print(output.shape)
         return output
